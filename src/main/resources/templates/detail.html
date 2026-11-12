@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>QueueBridge · Operations</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <a href="/" class="brand">▦ QueueBridge</a
+      ><span>SUPPLIER OPERATIONS / SYNTHETIC DEMO</span>
+      <form th:action="@{/logout}" method="post">
+        <button>Sign out</button>
+      </form>
+    </header>
+    <main>
+      <a href="/">← Order ledger</a>
+      <p class="eyebrow">ORDER TRACE</p>
+      <h1 th:text="${order.product}"></h1>
+      <p class="mono" th:text="${order.id}"></p>
+      <section class="metrics">
+        <article>
+          <span>STATE</span><strong th:text="${order.status}"></strong>
+        </article>
+        <article>
+          <span>ORDER VALUE</span
+          ><strong th:text="${'AED '+order.total}"></strong>
+        </article>
+        <article>
+          <span>QUANTITY</span><strong th:text="${order.quantity}"></strong>
+        </article>
+      </section>
+      <div class="columns">
+        <section class="panel">
+          <h2>Processing timeline</h2>
+          <p th:if="${#lists.isEmpty(attempts)}">
+            Awaiting worker delivery. Check that worker mode is running.
+          </p>
+          <article class="timeline" th:each="a:${attempts}">
+            <b th:text="${a.outcome}"></b
+            ><small th:text="${a.created_at}"></small
+            ><small class="mono" th:text="${a.event_id}"></small>
+          </article>
+          <h2>Delivery records</h2>
+          <article class="timeline" th:each="e:${events}">
+            <b
+              th:text="${e.published_at==null ? 'Pending confirmation' : 'Broker confirmed and routable'}"
+            ></b
+            ><small
+              th:text="${'Publish attempts: '+e.publish_attempts+' · Due: '+e.available_at}"
+            ></small
+            ><small th:text="${e.last_error}"></small>
+          </article>
+          <p>
+            Confirmation proves broker acceptance and routing at publish time;
+            it does not prove fulfillment.
+          </p>
+        </section>
+        <section class="panel">
+          <h2>Recovery &amp; Failure Lab</h2>
+          <p>
+            Administrator actions only. Replay requires FAILED status, clears
+            synthetic injection, and is limited to two new events per order.
+          </p>
+          <form
+            th:if="${admin}"
+            th:action="@{/admin/orders/{id}(id=${order.id})}"
+            method="post"
+          >
+            <label
+              >Reason<textarea
+                name="reason"
+                required
+                maxlength="300"
+                placeholder="Explain this action for the audit trail"
+              ></textarea></label
+            ><label
+              >Action<select name="action">
+                <option value="REPLAY">Replay failed order</option>
+                <optgroup
+                  th:if="${demo}"
+                  label="Local demo only — accepted orders"
+                >
+                  <option value="DUPLICATE">Deliver same event twice</option>
+                  <option value="TRANSIENT">
+                    Fail first processing attempt
+                  </option>
+                  <option value="PERMANENT">Reject business request</option>
+                  <option value="EXHAUST">
+                    Exhaust three processing attempts
+                  </option>
+                </optgroup>
+              </select></label
+            ><button>Record &amp; execute</button>
+          </form>
+          <p th:if="${demo}">
+            <b>LOCAL FAILURE LAB ENABLED.</b> Pause worker before choosing a
+            scenario. Then start worker. Transient retries wait 5 seconds; next
+            retry waits 15 seconds. Permanent rejection is a terminal business
+            outcome.
+          </p>
+          <p th:unless="${demo}">
+            Failure injection disabled in this configuration.
+          </p>
+          <p th:unless="${admin}">
+            Sign in as an administrator to perform recovery or Failure Lab
+            actions.
+          </p>
+          <h2>Administrative history</h2>
+          <article class="timeline" th:each="a:${audit}">
+            <b th:text="${a.action+' · '+a.actor}"></b>
+            <p th:text="${a.reason}"></p>
+            <small th:text="${a.created_at}"></small>
+          </article>
+        </section>
+      </div>
+    </main>
+    <footer>
+      QueueBridge · RabbitMQ transport · At-least-once delivery · Synthetic
+      orders only
+    </footer>
+  </body>
+</html>

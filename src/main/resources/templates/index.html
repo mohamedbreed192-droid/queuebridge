@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>QueueBridge · Operations</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <a href="/" class="brand">▦ QueueBridge</a
+      ><span>SUPPLIER OPERATIONS / SYNTHETIC DEMO</span>
+      <form th:action="@{/logout}" method="post">
+        <button>Sign out</button>
+      </form>
+    </header>
+    <main>
+      <p class="eyebrow">OPERATIONS CONSOLE</p>
+      <h1>Every order. Accounted for.</h1>
+      <p class="muted">
+        Follow synthetic purchase orders from acceptance to fulfillment.
+      </p>
+      <section class="metrics">
+        <article th:each="c:${counts}">
+          <span th:text="${c.status}"></span><strong th:text="${c.n}"></strong
+          ><small>Orders currently in this state</small>
+        </article>
+        <article>
+          <span>OUTBOX PENDING</span><strong th:text="${pending}"></strong
+          ><small>Unconfirmed rows, including delayed retries</small>
+        </article>
+      </section>
+      <div class="columns">
+        <section class="panel">
+          <h2>Submit an order</h2>
+          <p>Catalog prices in AED. Quantities 1–100.</p>
+          <form th:action="@{/orders}" method="post">
+            <label
+              >Product<select name="product">
+                <option
+                  th:each="p:${catalog}"
+                  th:value="${p.key}"
+                  th:text="${p.key+' · AED '+p.value}"
+                ></option></select></label
+            ><label
+              >Quantity<input
+                name="quantity"
+                type="number"
+                min="1"
+                max="100"
+                value="1"
+                required /></label
+            ><label
+              >Idempotency key<input
+                name="key"
+                th:value="${key}"
+                pattern="[A-Za-z0-9_-]{8,100}"
+                maxlength="100"
+                required /></label
+            ><small
+              >Reuse the key for the same request to return the existing
+              order.</small
+            ><button class="primary">Accept order →</button>
+          </form>
+        </section>
+        <section class="panel">
+          <h2>Order ledger</h2>
+          <a href="/?q=FAILED">Review failed orders →</a>
+          <form method="get" class="search">
+            <label
+              >Search product, status, or order ID<input
+                name="q"
+                maxlength="100"
+                placeholder="Search orders…" /></label
+            ><button>Search</button>
+          </form>
+          <p th:if="${#lists.isEmpty(orders)}">
+            No orders found. Submit a synthetic order to begin.
+          </p>
+          <div class="tablewrap">
+            <table th:unless="${#lists.isEmpty(orders)}">
+              <thead>
+                <tr>
+                  <th>Order / product</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="o:${orders}">
+                  <td>
+                    <a
+                      th:href="@{/orders/{id}(id=${o.id})}"
+                      th:text="${#strings.substring(o.id.toString(),0,8)}"
+                    ></a
+                    ><small th:text="${o.product}"></small>
+                  </td>
+                  <td th:text="${'AED '+o.total}"></td>
+                  <td><span class="badge" th:text="${o.status}"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <small
+            >Latest 100 matching orders. Metrics cover all orders; refresh to
+            observe changes.</small
+          >
+        </section>
+      </div>
+    </main>
+    <footer>
+      QueueBridge · RabbitMQ transport · At-least-once delivery · Synthetic
+      orders only
+    </footer>
+  </body>
+</html>

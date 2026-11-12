@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>QueueBridge · Request error</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">REQUEST COULD NOT BE COMPLETED</p>
+      <h1>Please review your request.</h1>
+      <p
+        th:text="${message ?: 'The action was unavailable or you do not have permission.'}"
+      ></p>
+      <a href="/">Return to order ledger</a>
+    </main>
+  </body>
+</html>

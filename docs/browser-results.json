@@ -1,0 +1,23 @@
+{
+  "checks": [
+    "operator submission and worker fulfillment",
+    "same key returns same order",
+    "conflicting key shows HTTP 409 explanation",
+    "operator recovery controls hidden",
+    "Failure Lab duplicate shows committed duplicate observation",
+    "Failure Lab transient retries then fulfills",
+    "Failure Lab permanent rejection",
+    "Failure Lab bounded retries reach failed state",
+    "administrator replay fulfills and preserves audit history",
+    "broker outage leaves accepted order and pending outbox",
+    "broker recovery drains pending outbox",
+    "failed order search reflects recovered state",
+    "mobile layout fits 390px viewport",
+    "no browser JavaScript errors"
+  ],
+  "screenshots": [
+    "desktop.png",
+    "mobile.png",
+    "recovery.png"
+  ]
+}

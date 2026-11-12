@@ -1,0 +1,49 @@
+name: queuebridge
+x-app: &app
+  build: .
+  env_file: .env
+  environment: &app-env
+    DB_URL: jdbc:postgresql://postgres:5432/queuebridge
+    RABBIT_HOST: rabbitmq
+    WORKER_ENABLED: "false"
+  depends_on:
+    postgres:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: queuebridge
+      POSTGRES_USER: queuebridge
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Run scripts/init-demo.sh}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U queuebridge]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  rabbitmq:
+    image: rabbitmq:4.1-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: queuebridge
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD:?Run scripts/init-demo.sh}
+    volumes: [rabbitdata:/var/lib/rabbitmq]
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  web:
+    <<: *app
+    ports: ["127.0.0.1:8080:8080"]
+  worker:
+    <<: *app
+    environment:
+      <<: *app-env
+      WORKER_ENABLED: "true"
+      SPRING_MAIN_WEB_APPLICATION_TYPE: none
+volumes:
+  pgdata:
+  rabbitdata:
