@@ -6,7 +6,7 @@ This is a learning project, not production-ready software. RabbitMQ is the imple
 
 ![Database-derived QueueBridge operations overview](docs/screenshots/desktop.png)
 
-Automated repository creation was blocked by GitHub integration permissions. The project is committed and verified locally; see [exact manual publication steps](docs/publication.md).
+[Source repository](https://github.com/mohamedbreed192-droid/queuebridge) · [Verification workflow](https://github.com/mohamedbreed192-droid/queuebridge/actions/workflows/verify.yml)
 
 ## Run locally
 

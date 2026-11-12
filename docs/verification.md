@@ -62,4 +62,4 @@ Set `CHROMIUM_PATH` if Chromium is not `/usr/bin/chromium`. This script creates 
 
 Gitleaks 8.30.1 scanned the publication files with redacted reporting and found no leaks. The checked-in `scripts/scan-publication.py` additionally compares indexed publication bytes against the generated local passwords and refuses a staged `.env` or build output. Local credentials, caches, build artifacts, and runtime logs are excluded. Secret scanning cannot prove the absence of every possible secret.
 
-GitHub Actions uses the same Maven verify target. GitHub rejected automated repository creation (`Resource not accessible by integration (createRepository)`), so no hosted Actions run occurred. See [manual publication steps](publication.md). A local result is not evidence that a hosted run passed.
+GitHub Actions uses the same Maven verify target. See the [hosted workflow](https://github.com/mohamedbreed192-droid/queuebridge/actions/workflows/verify.yml) for its live result. Local verification above is independent of hosted CI.
