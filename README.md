@@ -6,6 +6,8 @@ This is a learning project, not production-ready software. RabbitMQ is the imple
 
 ![Database-derived QueueBridge operations overview](docs/screenshots/desktop.png)
 
+Automated repository creation was blocked by GitHub integration permissions. The project is committed and verified locally; see [exact manual publication steps](docs/publication.md).
+
 ## Run locally
 
 Requires a full JDK 21, Docker with Compose v2, and OpenSSL. The Maven Wrapper downloads Maven 3.9.11. Ports bind to loopback; PostgreSQL and RabbitMQ are internal to Compose.
